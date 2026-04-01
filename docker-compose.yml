@@ -1,0 +1,7 @@
+services:
+  payment-page:
+    image: ghcr.io/necko-moe/necko3-payment-page:latest
+    container_name: necko3-payment-page
+    restart: unless-stopped
+    ports:
+      - "3000:80"
