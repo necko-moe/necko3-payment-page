@@ -29,6 +29,11 @@ Apply this rule whenever working on pages, components, layout, styling, theming,
 - Use shadcn/ui primitives for dialogs, sheets, dropdowns, popovers, tabs, buttons, inputs, tables, cards, badges, and forms.
 - Keep components composable and split large screens into smaller sections.
 
+## Component management
+- Before importing any shadcn/ui component, verify if it exists in `@/components/ui`.
+- If a required shadcn/ui component is missing, you MUST run `npx shadcn@latest add <component-name>` in the terminal before using it in the code.
+- Do not try to manually create shadcn/ui primitives by copy-pasting code from the web; always use the CLI to ensure all dependencies (Radix, Lucide, etc.) are installed correctly.
+
 ## When asked to simplify
 
 If the user asks to “simplify” something:
