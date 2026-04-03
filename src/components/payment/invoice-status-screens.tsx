@@ -3,9 +3,13 @@ import type { PublicInvoiceModel } from "@/types/invoice";
 
 interface StatusScreenProps {
   invoice: PublicInvoiceModel;
+  formatAmount?: (raw: string) => string;
 }
 
-export function InvoiceSuccess({ invoice }: StatusScreenProps) {
+export function InvoiceSuccess({
+  invoice,
+  formatAmount = (raw) => raw,
+}: StatusScreenProps) {
   return (
     <div className="flex flex-col items-center gap-4 rounded-3xl bg-accent-green/30 px-6 py-10 text-center">
       <div className="flex size-16 items-center justify-center rounded-full bg-accent-green/60">
@@ -14,7 +18,8 @@ export function InvoiceSuccess({ invoice }: StatusScreenProps) {
       <div>
         <h2 className="text-xl font-semibold text-warm-900">Payment Complete</h2>
         <p className="mt-1 text-sm text-warm-500">
-          {invoice.paid} {invoice.token} received on {invoice.network}
+          {formatAmount(invoice.paid)} {invoice.token} received on{" "}
+          {invoice.network}
         </p>
       </div>
       <p className="text-xs text-warm-500">
@@ -27,7 +32,10 @@ export function InvoiceSuccess({ invoice }: StatusScreenProps) {
   );
 }
 
-export function InvoiceExpired({ invoice }: StatusScreenProps) {
+export function InvoiceExpired({
+  invoice,
+  formatAmount = (raw) => raw,
+}: StatusScreenProps) {
   return (
     <div className="flex flex-col items-center gap-4 rounded-3xl bg-warm-300/20 px-6 py-10 text-center">
       <div className="flex size-16 items-center justify-center rounded-full bg-warm-300/40">
@@ -40,7 +48,8 @@ export function InvoiceExpired({ invoice }: StatusScreenProps) {
         </p>
       </div>
       <div className="text-xs text-warm-500">
-        Paid: {invoice.paid} / {invoice.amount} {invoice.token}
+        Paid: {formatAmount(invoice.paid)} / {formatAmount(invoice.amount)}{" "}
+        {invoice.token}
       </div>
       <div className="rounded-lg bg-white/60 px-3 py-1.5 font-mono text-xs text-warm-500">
         {invoice.id}

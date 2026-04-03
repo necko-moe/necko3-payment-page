@@ -4,16 +4,20 @@ interface PaymentProgressProps {
   paid: string;
   amount: string;
   token: string;
+  formatAmount?: (raw: string) => string;
 }
 
 export function PaymentProgress({
   paid,
   amount,
   token,
+  formatAmount = (raw) => raw,
 }: PaymentProgressProps) {
   const paidNum = parseFloat(paid) || 0;
   const amountNum = parseFloat(amount) || 1;
   const percent = Math.min(100, (paidNum / amountNum) * 100);
+  const paidLabel = formatAmount(paid);
+  const amountLabel = formatAmount(amount);
 
   return (
     <div className="space-y-3">
@@ -21,9 +25,9 @@ export function PaymentProgress({
         <div className="text-sm text-warm-500">Paid</div>
         <div className="text-right">
           <span className="text-lg font-semibold text-warm-900">
-            {paid}
+            {paidLabel}
           </span>
-          <span className="text-warm-500"> / {amount}</span>
+          <span className="text-warm-500"> / {amountLabel}</span>
           <span className="ml-1.5 text-sm font-medium text-accent-deep">
             {token}
           </span>

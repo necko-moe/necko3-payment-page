@@ -11,7 +11,19 @@ export interface PublicInvoiceModel {
   created_at: string;
   expires_at: string;
   status: InvoiceStatus;
+}
+
+export interface PublicChainModel {
+  block_lag: number;
   required_confirmations: number;
+  decimals: number;
+  logo_url: string | null;
+}
+
+export interface PublicTokenModel {
+  contract_address: string;
+  decimals: number;
+  logo_url: string | null;
 }
 
 export interface PublicPaymentModel {

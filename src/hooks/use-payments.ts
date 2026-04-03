@@ -24,7 +24,10 @@ export function usePayments(
   const [page, setPage] = useState(1);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const pageRef = useRef(page);
-  pageRef.current = page;
+
+  useEffect(() => {
+    pageRef.current = page;
+  }, [page]);
 
   const poll = useCallback(
     async (signal: AbortSignal) => {

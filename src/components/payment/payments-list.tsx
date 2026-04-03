@@ -18,6 +18,7 @@ interface PaymentsListProps {
   page: number;
   pageSize: number;
   onPageChange: (page: number) => void;
+  formatAmount?: (raw: string) => string;
 }
 
 const PAYMENT_STATUS_STYLES: Record<PaymentStatus, string> = {
@@ -45,7 +46,13 @@ function formatDate(iso: string): string {
   });
 }
 
-function PaymentRow({ payment }: { payment: PublicPaymentModel }) {
+function PaymentRow({
+  payment,
+  formatAmount,
+}: {
+  payment: PublicPaymentModel;
+  formatAmount: (raw: string) => string;
+}) {
   const { copied, copy } = useClipboard();
 
   return (
@@ -57,10 +64,10 @@ function PaymentRow({ payment }: { payment: PublicPaymentModel }) {
           </div>
           <div>
             <div className="text-sm font-medium text-warm-900">
-              +{payment.amount} {payment.token}
+              +{formatAmount(payment.amount)} {payment.token}
             </div>
             <div className="text-xs text-warm-500">
-              from {truncateAddr(payment.from)}
+              From {truncateAddr(payment.from)}
             </div>
           </div>
         </div>
@@ -97,6 +104,7 @@ export function PaymentsList({
   page,
   pageSize,
   onPageChange,
+  formatAmount = (raw) => raw,
 }: PaymentsListProps) {
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
@@ -125,7 +133,7 @@ export function PaymentsList({
                 className="animate-in fade-in-0 slide-in-from-bottom-2 fill-mode-both"
                 style={{ animationDuration: "300ms", animationDelay: `${i * 60}ms` }}
               >
-                <PaymentRow payment={p} />
+                <PaymentRow payment={p} formatAmount={formatAmount} />
               </div>
             ))}
           </div>

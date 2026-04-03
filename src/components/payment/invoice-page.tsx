@@ -1,5 +1,7 @@
+import { useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { useInvoice } from "@/hooks/use-invoice";
+import { formatTokenAmount } from "@/lib/format-token-amount";
 import { usePayments } from "@/hooks/use-payments";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
@@ -36,10 +38,22 @@ function LoadingSkeleton() {
 
 export function InvoicePage() {
   const { invoiceId } = useParams<{ invoiceId: string }>();
-  const { invoice, loading, error } = useInvoice(invoiceId ?? "");
+  const { invoice, loading, error, chain, token, metaLoading } = useInvoice(
+    invoiceId ?? "",
+  );
   const { payments, total, page, pageSize, setPage } = usePayments(
     invoiceId ?? "",
     invoice?.status ?? null,
+  );
+
+  const effectiveDecimals = token?.decimals ?? chain?.decimals ?? null;
+
+  const formatAmount = useMemo(
+    () => (raw: string) =>
+      effectiveDecimals != null
+        ? formatTokenAmount(raw, effectiveDecimals)
+        : raw,
+    [effectiveDecimals],
   );
 
   return (
@@ -55,9 +69,15 @@ export function InvoicePage() {
           ) : invoice ? (
             <div className="p-6">
               {invoice.status === "Paid" ? (
-                <InvoiceSuccess invoice={invoice} />
+                <InvoiceSuccess
+                  invoice={invoice}
+                  formatAmount={formatAmount}
+                />
               ) : invoice.status === "Expired" ? (
-                <InvoiceExpired invoice={invoice} />
+                <InvoiceExpired
+                  invoice={invoice}
+                  formatAmount={formatAmount}
+                />
               ) : invoice.status === "Cancelled" ? (
                 <InvoiceCancelled invoice={invoice} />
               ) : (
@@ -73,7 +93,13 @@ export function InvoicePage() {
 
                     <Separator className="bg-warm-300/40" />
 
-                    <QrCode address={invoice.address} />
+                    <QrCode
+                      address={invoice.address}
+                      networkName={invoice.network}
+                      metaLoading={metaLoading}
+                      chain={chain}
+                      token={token}
+                    />
 
                     <div className="flex justify-center">
                       <AddressDisplay address={invoice.address} />
@@ -87,7 +113,9 @@ export function InvoicePage() {
                       token={invoice.token}
                       network={invoice.network}
                       createdAt={invoice.created_at}
-                      requiredConfirmations={invoice.required_confirmations}
+                      chain={chain}
+                      tokenMeta={token}
+                      metaLoading={metaLoading}
                     />
                   </div>
 
@@ -97,6 +125,7 @@ export function InvoicePage() {
                       paid={invoice.paid}
                       amount={invoice.amount}
                       token={invoice.token}
+                      formatAmount={formatAmount}
                     />
 
                     <Separator className="bg-warm-300/40" />
@@ -107,6 +136,7 @@ export function InvoicePage() {
                       page={page}
                       pageSize={pageSize}
                       onPageChange={setPage}
+                      formatAmount={formatAmount}
                     />
                   </div>
                 </div>
@@ -122,6 +152,7 @@ export function InvoicePage() {
                     page={page}
                     pageSize={pageSize}
                     onPageChange={setPage}
+                    formatAmount={formatAmount}
                   />
                 </div>
               )}

@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import QRCodeStyling from "qr-code-styling";
 import { colors } from "@/lib/colors";
+import { buildQrCenterImageDataUrl } from "@/lib/qr-center-image";
 import { useClipboard } from "@/hooks/use-clipboard";
 import { Check, Copy } from "lucide-react";
 import {
@@ -8,47 +9,124 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import type { PublicChainModel, PublicTokenModel } from "@/types/invoice";
 
-interface QrCodeProps {
+export interface QrCodeProps {
   address: string;
   size?: number;
+  networkName: string;
+  metaLoading: boolean;
+  chain: PublicChainModel | null;
+  token: PublicTokenModel | null;
 }
 
-const qrCode = new QRCodeStyling({
-  width: 240,
-  height: 240,
-  type: "svg",
-  dotsOptions: {
-    color: colors.accent.deep,
-    type: "extra-rounded",
-  },
-  cornersSquareOptions: {
-    color: colors.accent.deep,
-    type: "extra-rounded",
-  },
-  cornersDotOptions: {
-    color: colors.accent.deep,
-    type: "dot",
-  },
-  backgroundOptions: {
-    color: "transparent",
-  },
-  qrOptions: {
-    errorCorrectionLevel: "M",
-  },
-});
+function createQrInstance() {
+  return new QRCodeStyling({
+    width: 240,
+    height: 240,
+    type: "svg",
+    dotsOptions: {
+      color: colors.accent.deep,
+      type: "extra-rounded",
+    },
+    cornersSquareOptions: {
+      color: colors.accent.deep,
+      type: "extra-rounded",
+    },
+    cornersDotOptions: {
+      color: colors.accent.deep,
+      type: "dot",
+    },
+    backgroundOptions: {
+      color: "transparent",
+    },
+    qrOptions: {
+      errorCorrectionLevel: "M",
+    },
+  });
+}
 
-export function QrCode({ address, size = 240 }: QrCodeProps) {
+export function QrCode({
+  address,
+  size = 240,
+  networkName,
+  metaLoading,
+  chain,
+  token,
+}: QrCodeProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const qrRef = useRef<QRCodeStyling | null>(null);
   const { copied, copy } = useClipboard();
 
   useEffect(() => {
-    qrCode.update({ data: address, width: size, height: size });
-    if (containerRef.current) {
-      containerRef.current.innerHTML = "";
-      qrCode.append(containerRef.current);
+    if (qrRef.current == null) {
+      qrRef.current = createQrInstance();
     }
-  }, [address, size]);
+    const qr = qrRef.current;
+    const el = containerRef.current;
+    let cancelled = false;
+
+    const run = async () => {
+      let image: string | undefined;
+      let errorCorrectionLevel: "H" | "M" = "M";
+
+      if (!metaLoading) {
+        if (token?.logo_url) {
+          const dataUrl = await buildQrCenterImageDataUrl({
+            mode: "token",
+            tokenLogoUrl: token.logo_url,
+            chainLogoUrl: chain?.logo_url ?? null,
+            networkName,
+          });
+          if (!cancelled && dataUrl) {
+            image = dataUrl;
+            errorCorrectionLevel = "H";
+          }
+        } else if (token === null && chain?.logo_url) {
+          const dataUrl = await buildQrCenterImageDataUrl({
+            mode: "chain_only",
+            chainLogoUrl: chain.logo_url,
+          });
+          if (!cancelled && dataUrl) {
+            image = dataUrl;
+            errorCorrectionLevel = "H";
+          }
+        }
+      }
+
+      if (cancelled) return;
+
+      qr.update({
+        data: address,
+        width: size,
+        height: size,
+        qrOptions: { errorCorrectionLevel },
+        ...(image
+          ? {
+              image,
+              imageOptions: {
+                crossOrigin: "anonymous",
+                margin: 4,
+                imageSize: 0.38,
+                hideBackgroundDots: true,
+              },
+            }
+          : {
+              image: "",
+            }),
+      });
+
+      if (el) {
+        el.innerHTML = "";
+        qr.append(el);
+      }
+    };
+
+    void run();
+    return () => {
+      cancelled = true;
+    };
+  }, [address, size, metaLoading, chain, token, networkName]);
 
   return (
     <Tooltip>
@@ -58,7 +136,11 @@ export function QrCode({ address, size = 240 }: QrCodeProps) {
           onClick={() => copy(address)}
           className="group relative mx-auto block cursor-pointer rounded-3xl bg-white p-5 transition-opacity"
         >
-          <div ref={containerRef} className="flex items-center justify-center" />
+          <div
+            ref={containerRef}
+            className="mx-auto flex items-center justify-center"
+            style={{ width: size, height: size }}
+          />
           <div className="absolute inset-0 flex items-center justify-center rounded-3xl bg-white/40 opacity-0 backdrop-blur-[2px] transition-opacity group-hover:opacity-100">
             {copied ? (
               <Check className="size-8 text-accent-deep" />
