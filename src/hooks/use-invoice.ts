@@ -84,6 +84,12 @@ export function useInvoice(invoiceId: string): UseInvoiceReturn {
           }
           return true;
         }
+        if (res.status === "success" && !res.data) {
+          if (!hasLoadedOnce.current) {
+            setError("Invoice not found");
+          }
+          return true;
+        }
         if (res.data) {
           hasLoadedOnce.current = true;
           setInvoice(res.data);
@@ -93,9 +99,13 @@ export function useInvoice(invoiceId: string): UseInvoiceReturn {
         return false;
       } catch (err: unknown) {
         if (err instanceof DOMException && err.name === "AbortError") return true;
-        if (hasLoadedOnce.current && err instanceof Error) {
-          toast.error(err.message);
+        const msg =
+          err instanceof Error ? err.message : "Could not load invoice";
+        if (!hasLoadedOnce.current) {
+          setError(msg);
+          return true;
         }
+        toast.error(msg);
         return false;
       }
     },

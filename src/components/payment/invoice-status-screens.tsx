@@ -25,7 +25,7 @@ export function InvoiceSuccess({
       <p className="text-xs text-warm-500">
         Webhook has been sent to the merchant
       </p>
-      <div className="mt-2 rounded-lg bg-white/60 px-3 py-1.5 font-mono text-xs text-warm-500">
+      <div className="mt-2 rounded-lg bg-warm-50/60 px-3 py-1.5 font-mono text-xs text-warm-500">
         {invoice.id}
       </div>
     </div>
@@ -51,7 +51,7 @@ export function InvoiceExpired({
         Paid: {formatAmount(invoice.paid)} / {formatAmount(invoice.amount)}{" "}
         {invoice.token}
       </div>
-      <div className="rounded-lg bg-white/60 px-3 py-1.5 font-mono text-xs text-warm-500">
+      <div className="rounded-lg bg-warm-50/60 px-3 py-1.5 font-mono text-xs text-warm-500">
         {invoice.id}
       </div>
     </div>
@@ -70,7 +70,7 @@ export function InvoiceCancelled({ invoice }: StatusScreenProps) {
           This invoice was cancelled by the administrator.
         </p>
       </div>
-      <div className="rounded-lg bg-white/60 px-3 py-1.5 font-mono text-xs text-warm-500">
+      <div className="rounded-lg bg-warm-50/60 px-3 py-1.5 font-mono text-xs text-warm-500">
         {invoice.id}
       </div>
     </div>
@@ -79,8 +79,8 @@ export function InvoiceCancelled({ invoice }: StatusScreenProps) {
 
 export function InvoiceError({ message }: { message: string }) {
   return (
-    <div className="flex flex-col items-center gap-4 rounded-3xl bg-red-50/50 px-6 py-10 text-center">
-      <div className="flex size-16 items-center justify-center rounded-full bg-red-100">
+    <div className="flex flex-col items-center gap-4 rounded-3xl bg-red-50/50 px-6 py-10 text-center dark:bg-red-950/30">
+      <div className="flex size-16 items-center justify-center rounded-full bg-red-100 dark:bg-red-950/50">
         <XCircle className="size-8 text-red-500" />
       </div>
       <div>

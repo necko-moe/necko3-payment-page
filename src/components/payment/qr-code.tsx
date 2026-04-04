@@ -1,8 +1,9 @@
 import { useEffect, useRef } from "react";
 import QRCodeStyling from "qr-code-styling";
-import { colors } from "@/lib/colors";
+import { cssVar } from "@/lib/css-var";
 import { buildQrCenterImageDataUrl } from "@/lib/qr-center-image";
 import { useClipboard } from "@/hooks/use-clipboard";
+import { useTheme } from "@/hooks/use-theme";
 import { Check, Copy } from "lucide-react";
 import {
   Tooltip,
@@ -20,21 +21,21 @@ export interface QrCodeProps {
   token: PublicTokenModel | null;
 }
 
-function createQrInstance() {
+function createQrInstance(color: string) {
   return new QRCodeStyling({
     width: 240,
     height: 240,
     type: "svg",
     dotsOptions: {
-      color: colors.accent.deep,
+      color,
       type: "extra-rounded",
     },
     cornersSquareOptions: {
-      color: colors.accent.deep,
+      color,
       type: "extra-rounded",
     },
     cornersDotOptions: {
-      color: colors.accent.deep,
+      color,
       type: "dot",
     },
     backgroundOptions: {
@@ -57,11 +58,12 @@ export function QrCode({
   const containerRef = useRef<HTMLDivElement>(null);
   const qrRef = useRef<QRCodeStyling | null>(null);
   const { copied, copy } = useClipboard();
+  const { theme } = useTheme();
 
   useEffect(() => {
-    if (qrRef.current == null) {
-      qrRef.current = createQrInstance();
-    }
+    const accentDeep = cssVar("--accent-deep");
+
+    qrRef.current = createQrInstance(accentDeep);
     const qr = qrRef.current;
     const el = containerRef.current;
     let cancelled = false;
@@ -126,7 +128,7 @@ export function QrCode({
     return () => {
       cancelled = true;
     };
-  }, [address, size, metaLoading, chain, token, networkName]);
+  }, [address, size, metaLoading, chain, token, networkName, theme]);
 
   return (
     <Tooltip>
@@ -134,14 +136,14 @@ export function QrCode({
         <button
           type="button"
           onClick={() => copy(address)}
-          className="group relative mx-auto block cursor-pointer rounded-3xl bg-white p-5 transition-opacity"
+          className="group relative mx-auto block cursor-pointer rounded-3xl bg-warm-50 p-5 transition-opacity"
         >
           <div
             ref={containerRef}
             className="mx-auto flex items-center justify-center"
             style={{ width: size, height: size }}
           />
-          <div className="absolute inset-0 flex items-center justify-center rounded-3xl bg-white/40 opacity-0 backdrop-blur-[2px] transition-opacity group-hover:opacity-100">
+          <div className="absolute inset-0 flex items-center justify-center rounded-3xl bg-warm-50/40 opacity-0 backdrop-blur-[2px] transition-opacity group-hover:opacity-100">
             {copied ? (
               <Check className="size-8 text-accent-deep" />
             ) : (

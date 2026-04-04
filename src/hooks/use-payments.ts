@@ -18,6 +18,8 @@ interface UsePaymentsReturn {
 export function usePayments(
   invoiceId: string,
   invoiceStatus: InvoiceStatus | null,
+  /** When false, skips fetches (e.g. invoice failed to load or is still loading). */
+  active: boolean,
 ): UsePaymentsReturn {
   const [payments, setPayments] = useState<PublicPaymentModel[]>([]);
   const [total, setTotal] = useState(0);
@@ -53,6 +55,12 @@ export function usePayments(
   );
 
   useEffect(() => {
+    if (!active || !invoiceId) {
+      setPayments([]);
+      setTotal(0);
+      return;
+    }
+
     const controller = new AbortController();
     const isTerminal = invoiceStatus !== null && TERMINAL_STATUSES.has(invoiceStatus);
 
@@ -71,7 +79,7 @@ export function usePayments(
         intervalRef.current = null;
       }
     };
-  }, [poll, invoiceStatus, page]);
+  }, [poll, invoiceStatus, page, active, invoiceId]);
 
   return { payments, total, page, pageSize: PAGE_SIZE, setPage };
 }

@@ -1,8 +1,10 @@
-import { useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
+import { Sun, Moon } from "lucide-react";
 import { useInvoice } from "@/hooks/use-invoice";
 import { formatTokenAmount } from "@/lib/format-token-amount";
 import { usePayments } from "@/hooks/use-payments";
+import { useTheme } from "@/hooks/use-theme";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
 import { QrCode } from "./qr-code";
@@ -17,6 +19,80 @@ import {
   InvoiceCancelled,
   InvoiceError,
 } from "./invoice-status-screens";
+
+const THEME_COMFORT_HINT_KEY = "necko3_theme_comfort_hint_dismissed";
+
+function ThemeToggle() {
+  const { theme, toggle } = useTheme();
+  const [comfortHintOpen, setComfortHintOpen] = useState(() => {
+    try {
+      return sessionStorage.getItem(THEME_COMFORT_HINT_KEY) !== "1";
+    } catch {
+      return true;
+    }
+  });
+
+  const dismissComfortHint = useCallback(() => {
+    try {
+      sessionStorage.setItem(THEME_COMFORT_HINT_KEY, "1");
+    } catch {
+      /* private mode */
+    }
+    setComfortHintOpen(false);
+  }, []);
+
+  useEffect(() => {
+    if (!comfortHintOpen || theme !== "light") return;
+    const id = window.setTimeout(dismissComfortHint, 10_000);
+    return () => clearTimeout(id);
+  }, [comfortHintOpen, theme, dismissComfortHint]);
+
+  const hintVisible = comfortHintOpen && theme === "light";
+
+  const handleToggle = () => {
+    if (hintVisible) dismissComfortHint();
+    toggle();
+  };
+
+  return (
+    <div className="relative inline-flex flex-col items-center">
+      {hintVisible ? (
+        <div
+          className="animate-in fade-in slide-in-from-bottom-1 zoom-in-95 absolute bottom-[calc(100%+0.5rem)] left-1/2 z-10 w-[min(calc(100vw-2rem),15rem)] -translate-x-1/2 duration-300 fill-mode-both"
+          role="status"
+        >
+          <div className="relative rounded-lg border border-warm-300/60 bg-warm-100 px-2.5 py-2 text-center text-[11px] leading-snug text-warm-900 shadow-md">
+            <p>
+              Got a full bright-theme flashbang to the face? Don&apos;t
+              worry — I&apos;m right here.{" "}
+              <br />
+              <span className="font-semibold text-accent-deep">Click me</span>{" "}
+              :)
+            </p>
+            <div
+              className="absolute -bottom-1 left-1/2 size-2 -translate-x-1/2 rotate-45 border border-warm-300/60 border-t-0 border-l-0 bg-warm-100"
+              aria-hidden
+            />
+          </div>
+        </div>
+      ) : null}
+      <button
+        type="button"
+        onClick={handleToggle}
+        className="rounded-md p-0.5 text-warm-500 transition-colors hover:text-warm-900"
+        aria-label={
+          theme === "dark" ? "Switch to light mode" : "Switch to dark mode"
+        }
+      >
+        {theme === "dark" ? (
+          <Sun className="size-3.5" />
+        ) : (
+          <Moon className="size-3.5" />
+        )}
+      </button>
+    </div>
+  );
+}
 
 function LoadingSkeleton() {
   return (
@@ -44,6 +120,7 @@ export function InvoicePage() {
   const { payments, total, page, pageSize, setPage } = usePayments(
     invoiceId ?? "",
     invoice?.status ?? null,
+    !!invoice,
   );
 
   const effectiveDecimals = token?.decimals ?? chain?.decimals ?? null;
@@ -160,9 +237,11 @@ export function InvoicePage() {
           ) : null}
         </div>
 
-        <p className="mt-4 text-center text-xs text-warm-500">
-          Powered by necko3
-        </p>
+        <div className="mt-4 flex items-center justify-center gap-2 text-xs text-warm-500">
+          <span>Powered by necko3</span>
+          <span className="text-warm-300">·</span>
+          <ThemeToggle />
+        </div>
       </div>
     </div>
   );

@@ -145,6 +145,26 @@ export function InvoiceInfo({
         </div>
       </div>
 
+      {tokenMeta ? (
+        <div className="flex items-center justify-between text-xs">
+          <span className="text-warm-500">Contract</span>
+          <button
+            type="button"
+            onClick={() => contractClipboard.copy(tokenMeta.contract_address)}
+            className="flex max-w-[min(100%,14rem)] items-center gap-1 font-mono text-warm-900 transition-colors hover:text-accent-deep"
+          >
+            <span className="truncate">
+              {truncateAddressLike(tokenMeta.contract_address)}
+            </span>
+            {contractClipboard.copied ? (
+              <Check className="size-3 shrink-0 text-accent-deep" />
+            ) : (
+              <Copy className="size-3 shrink-0 text-warm-500" />
+            )}
+          </button>
+        </div>
+      ) : null}
+
       <Separator className="bg-warm-300/40" />
 
       <div className="flex items-center justify-between text-xs">
@@ -208,29 +228,6 @@ export function InvoiceInfo({
               </TooltipContent>
             </Tooltip>
             <span className="font-medium text-warm-900">{chain.block_lag}</span>
-          </div>
-        </>
-      ) : null}
-
-      {tokenMeta ? (
-        <>
-          <Separator className="bg-warm-300/40" />
-          <div className="flex items-center justify-between text-xs">
-            <span className="text-warm-500">Contract</span>
-            <button
-              type="button"
-              onClick={() => contractClipboard.copy(tokenMeta.contract_address)}
-              className="flex max-w-[min(100%,14rem)] items-center gap-1 font-mono text-warm-900 transition-colors hover:text-accent-deep"
-            >
-              <span className="truncate">
-                {truncateAddressLike(tokenMeta.contract_address)}
-              </span>
-              {contractClipboard.copied ? (
-                <Check className="size-3 shrink-0 text-accent-deep" />
-              ) : (
-                <Copy className="size-3 shrink-0 text-warm-500" />
-              )}
-            </button>
           </div>
         </>
       ) : null}

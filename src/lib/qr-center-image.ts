@@ -1,4 +1,4 @@
-import { colors } from "@/lib/colors";
+import { cssVar } from "@/lib/css-var";
 
 const CANVAS = 256;
 /** Token logo in center (~204px in 256 canvas). */
@@ -64,12 +64,12 @@ function drawLetterBadge(
   ctx.save();
   ctx.beginPath();
   ctx.arc(cx, cy, size / 2, 0, Math.PI * 2);
-  ctx.fillStyle = colors.accent.light;
+  ctx.fillStyle = cssVar("--accent-light");
   ctx.fill();
-  ctx.strokeStyle = colors.accent.deep;
+  ctx.strokeStyle = cssVar("--accent-deep");
   ctx.lineWidth = 2;
   ctx.stroke();
-  ctx.fillStyle = colors.accent.deep;
+  ctx.fillStyle = cssVar("--accent-deep");
   ctx.font = `bold ${Math.floor(size * 0.42)}px system-ui, sans-serif`;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";

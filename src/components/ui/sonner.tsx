@@ -1,10 +1,13 @@
 import { Toaster as Sonner, type ToasterProps } from "sonner"
 import { OctagonXIcon } from "lucide-react"
+import { useTheme } from "@/hooks/use-theme"
 
 const Toaster = (props: ToasterProps) => {
+  const { theme } = useTheme()
+
   return (
     <Sonner
-      theme="light"
+      theme={theme}
       position="top-right"
       className="toaster group"
       icons={{
@@ -23,7 +26,7 @@ const Toaster = (props: ToasterProps) => {
           toast: "font-sans shadow-md border !border-warm-300/50 !bg-warm-100 !text-warm-900",
           title: "text-sm font-medium",
           description: "text-xs !text-warm-500",
-          error: "!border-red-200 !bg-red-50 !text-red-700",
+          error: "!border-red-200 !bg-red-50 !text-red-700 dark:!border-red-900 dark:!bg-red-950 dark:!text-red-300",
         },
       }}
       {...props}

@@ -24,7 +24,7 @@ export function AddressDisplay({ address }: AddressDisplayProps) {
         <button
           type="button"
           onClick={() => copy(address)}
-          className="mx-auto flex items-center gap-2 rounded-xl bg-white/80 px-4 py-2.5 font-mono text-sm text-warm-900 transition-colors hover:bg-white"
+          className="mx-auto flex items-center gap-2 rounded-xl bg-warm-50/80 px-4 py-2.5 font-mono text-sm text-warm-900 transition-colors hover:bg-warm-50"
         >
           <span>{truncateAddress(address)}</span>
           {copied ? (

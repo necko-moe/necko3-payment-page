@@ -106,6 +106,17 @@
 }
 
 .dark {
+    --warm-50: #141210;
+    --warm-100: #1e1a16;
+    --warm-300: #413a34;
+    --warm-500: #a09588;
+    --warm-900: #ede5dc;
+
+    --accent-deep: #9acad6;
+    --accent-main: #6ab3bf;
+    --accent-light: #1a3842;
+    --accent-green: #2a4420;
+
     --background: oklch(0.145 0 0);
     --foreground: oklch(0.985 0 0);
     --card: oklch(0.205 0 0);
