@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Sun, Moon } from "lucide-react";
 import { useInvoice } from "@/hooks/use-invoice";
 import { formatTokenAmount } from "@/lib/format-token-amount";
@@ -23,6 +24,7 @@ import {
 const THEME_COMFORT_HINT_KEY = "necko3_theme_comfort_hint_dismissed";
 
 function ThemeToggle() {
+  const { t } = useTranslation();
   const { theme, toggle } = useTheme();
   const [comfortHintOpen, setComfortHintOpen] = useState(() => {
     try {
@@ -63,10 +65,9 @@ function ThemeToggle() {
         >
           <div className="relative rounded-lg border border-warm-300/60 bg-warm-100 px-2.5 py-2 text-center text-[11px] leading-snug text-warm-900 shadow-md">
             <p>
-              Got a full bright-theme flashbang to the face? Don&apos;t
-              worry — I&apos;m right here.{" "}
+              {t("themeHint")}{" "}
               <br />
-              <span className="font-semibold text-accent-deep">Click me</span>{" "}
+              <span className="font-semibold text-accent-deep">{t("themeHintCta")}</span>{" "}
               :)
             </p>
             <div
@@ -81,7 +82,7 @@ function ThemeToggle() {
         onClick={handleToggle}
         className="rounded-md p-0.5 text-warm-500 transition-colors hover:text-warm-900"
         aria-label={
-          theme === "dark" ? "Switch to light mode" : "Switch to dark mode"
+          theme === "dark" ? t("switchToLight") : t("switchToDark")
         }
       >
         {theme === "dark" ? (
@@ -90,6 +91,36 @@ function ThemeToggle() {
           <Moon className="size-3.5" />
         )}
       </button>
+    </div>
+  );
+}
+
+const LANGUAGES = [
+  { code: "en", label: "EN" },
+  { code: "ru", label: "RU" },
+  { code: "uk", label: "UK" },
+  { code: "zh", label: "中文" },
+] as const;
+
+function LanguageSwitcher() {
+  const { i18n } = useTranslation();
+
+  return (
+    <div className="flex items-center gap-1">
+      {LANGUAGES.map(({ code, label }) => (
+        <button
+          key={code}
+          type="button"
+          onClick={() => i18n.changeLanguage(code)}
+          className={`rounded px-1.5 py-0.5 text-[11px] transition-colors ${
+            i18n.language === code
+              ? "font-semibold text-accent-deep"
+              : "text-warm-500 hover:text-warm-900"
+          }`}
+        >
+          {label}
+        </button>
+      ))}
     </div>
   );
 }
@@ -113,6 +144,7 @@ function LoadingSkeleton() {
 }
 
 export function InvoicePage() {
+  const { t } = useTranslation();
   const { invoiceId } = useParams<{ invoiceId: string }>();
   const { invoice, loading, error, chain, token, metaLoading } = useInvoice(
     invoiceId ?? "",
@@ -163,7 +195,7 @@ export function InvoicePage() {
                   <div className="space-y-5">
                     <div className="flex items-center justify-between">
                       <h1 className="text-lg font-semibold text-warm-900">
-                        Payment
+                        {t("payment")}
                       </h1>
                       <CountdownTimer expiresAt={invoice.expires_at} />
                     </div>
@@ -238,7 +270,9 @@ export function InvoicePage() {
         </div>
 
         <div className="mt-4 flex items-center justify-center gap-2 text-xs text-warm-500">
-          <span>Powered by necko3</span>
+          <span>{t("poweredBy")}</span>
+          <span className="text-warm-300">·</span>
+          <LanguageSwitcher />
           <span className="text-warm-300">·</span>
           <ThemeToggle />
         </div>

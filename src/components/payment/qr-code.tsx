@@ -4,6 +4,7 @@ import { cssVar } from "@/lib/css-var";
 import { buildQrCenterImageDataUrl } from "@/lib/qr-center-image";
 import { useClipboard } from "@/hooks/use-clipboard";
 import { useTheme } from "@/hooks/use-theme";
+import { useTranslation } from "react-i18next";
 import { Check, Copy } from "lucide-react";
 import {
   Tooltip,
@@ -59,6 +60,7 @@ export function QrCode({
   const qrRef = useRef<QRCodeStyling | null>(null);
   const { copied, copy } = useClipboard();
   const { theme } = useTheme();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const accentDeep = cssVar("--accent-deep");
@@ -153,7 +155,7 @@ export function QrCode({
         </button>
       </TooltipTrigger>
       <TooltipContent>
-        <p>{copied ? "Copied!" : "Click to copy address"}</p>
+        <p>{copied ? t("copied") : t("clickToCopyAddress")}</p>
       </TooltipContent>
     </Tooltip>
   );

@@ -9,6 +9,7 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { useClipboard } from "@/hooks/use-clipboard";
+import { useTranslation } from "react-i18next";
 import { ArrowDownLeft, Check, Copy, Inbox } from "lucide-react";
 import type { PaymentStatus, PublicPaymentModel } from "@/types/invoice";
 
@@ -37,8 +38,8 @@ function truncateAddr(addr: string) {
   return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
 }
 
-function formatDate(iso: string): string {
-  return new Date(iso).toLocaleString(undefined, {
+function formatDate(iso: string, locale?: string): string {
+  return new Date(iso).toLocaleString(locale, {
     month: "short",
     day: "numeric",
     hour: "2-digit",
@@ -53,6 +54,7 @@ function PaymentRow({
   payment: PublicPaymentModel;
   formatAmount: (raw: string) => string;
 }) {
+  const { t, i18n } = useTranslation();
   const { copied, copy } = useClipboard();
 
   return (
@@ -67,7 +69,7 @@ function PaymentRow({
               +{formatAmount(payment.amount)} {payment.token}
             </div>
             <div className="text-xs text-warm-500">
-              From {truncateAddr(payment.from)}
+              {t("from", { address: truncateAddr(payment.from) })}
             </div>
           </div>
         </div>
@@ -75,7 +77,7 @@ function PaymentRow({
           variant="outline"
           className={`shrink-0 rounded-md px-2 py-0.5 text-[10px] font-medium ${PAYMENT_STATUS_STYLES[payment.status]}`}
         >
-          {payment.status}
+          {t(`status.${payment.status}`)}
         </Badge>
       </div>
 
@@ -85,14 +87,14 @@ function PaymentRow({
           onClick={() => copy(payment.tx_hash)}
           className="flex items-center gap-1 font-mono transition-colors hover:text-accent-deep"
         >
-          TX: {truncateHash(payment.tx_hash)}
+          {t("txHash", { hash: truncateHash(payment.tx_hash) })}
           {copied ? (
             <Check className="size-3 text-accent-deep" />
           ) : (
             <Copy className="size-3" />
           )}
         </button>
-        <span>{formatDate(payment.created_at)}</span>
+        <span>{formatDate(payment.created_at, i18n.language)}</span>
       </div>
     </div>
   );
@@ -106,12 +108,13 @@ export function PaymentsList({
   onPageChange,
   formatAmount = (raw) => raw,
 }: PaymentsListProps) {
+  const { t } = useTranslation();
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
   return (
     <div className="rounded-2xl bg-warm-100/60 p-4">
       <h3 className="mb-2 text-sm font-semibold text-warm-900">
-        Transactions
+        {t("transactions")}
         {total > 0 && (
           <span className="ml-1.5 text-xs font-normal text-warm-500">
             ({total})
@@ -122,7 +125,7 @@ export function PaymentsList({
       {payments.length === 0 ? (
         <div className="flex flex-col items-center gap-2 py-8 text-warm-500">
           <Inbox className="size-8 text-warm-300" />
-          <span className="text-sm">No transactions yet</span>
+          <span className="text-sm">{t("noTransactions")}</span>
         </div>
       ) : (
         <>

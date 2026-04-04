@@ -1,5 +1,6 @@
 import { Check, Copy } from "lucide-react";
 import { useClipboard } from "@/hooks/use-clipboard";
+import { useTranslation } from "react-i18next";
 import {
   Tooltip,
   TooltipContent,
@@ -16,6 +17,7 @@ function truncateAddress(addr: string) {
 }
 
 export function AddressDisplay({ address }: AddressDisplayProps) {
+  const { t } = useTranslation();
   const { copied, copy } = useClipboard();
 
   return (
@@ -35,7 +37,7 @@ export function AddressDisplay({ address }: AddressDisplayProps) {
         </button>
       </TooltipTrigger>
       <TooltipContent>
-        <p>{copied ? "Copied!" : "Click to copy address"}</p>
+        <p>{copied ? t("copied") : t("clickToCopyAddress")}</p>
       </TooltipContent>
     </Tooltip>
   );

@@ -1,4 +1,5 @@
 import { Progress } from "@/components/ui/progress";
+import { useTranslation } from "react-i18next";
 
 interface PaymentProgressProps {
   paid: string;
@@ -13,6 +14,7 @@ export function PaymentProgress({
   token,
   formatAmount = (raw) => raw,
 }: PaymentProgressProps) {
+  const { t } = useTranslation();
   const paidNum = parseFloat(paid) || 0;
   const amountNum = parseFloat(amount) || 1;
   const percent = Math.min(100, (paidNum / amountNum) * 100);
@@ -22,7 +24,7 @@ export function PaymentProgress({
   return (
     <div className="space-y-3">
       <div className="flex items-baseline justify-between gap-2">
-        <div className="text-sm text-warm-500">Paid</div>
+        <div className="text-sm text-warm-500">{t("paid")}</div>
         <div className="text-right">
           <span className="text-lg font-semibold text-warm-900">
             {paidLabel}

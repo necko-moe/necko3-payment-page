@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/hooks/use-theme";
 import { App } from "./App";
+import "./i18n";
 import "./index.css";
 
 createRoot(document.getElementById("root")!).render(

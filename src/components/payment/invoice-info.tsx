@@ -7,6 +7,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useClipboard } from "@/hooks/use-clipboard";
+import { useTranslation } from "react-i18next";
 import { Copy, Check, Info } from "lucide-react";
 import type {
   InvoiceStatus,
@@ -33,8 +34,8 @@ const STATUS_STYLES: Record<InvoiceStatus, string> = {
   Cancelled: "bg-warm-300/30 text-warm-500 border-warm-300",
 };
 
-function formatDate(iso: string): string {
-  return new Date(iso).toLocaleString(undefined, {
+function formatDate(iso: string, locale?: string): string {
+  return new Date(iso).toLocaleString(locale, {
     year: "numeric",
     month: "short",
     day: "numeric",
@@ -99,6 +100,7 @@ export function InvoiceInfo({
   tokenMeta,
   metaLoading,
 }: InvoiceInfoProps) {
+  const { t, i18n } = useTranslation();
   const idClipboard = useClipboard();
   const contractClipboard = useClipboard();
 
@@ -116,7 +118,7 @@ export function InvoiceInfo({
           variant="outline"
           className={`rounded-lg px-2.5 py-1 text-xs font-medium ${STATUS_STYLES[status]}`}
         >
-          {status}
+          {t(`status.${status}`)}
         </Badge>
         <div className="flex min-w-0 items-center gap-1.5 text-xs text-warm-500">
           <span className="flex min-w-0 items-center gap-1">
@@ -130,7 +132,7 @@ export function InvoiceInfo({
               {token}
             </span>
           </span>
-          <span className="shrink-0">on</span>
+          <span className="shrink-0">{t("on")}</span>
           <span className="flex min-w-0 items-center gap-1">
             {showNetworkMark ? (
               <LogoMark
@@ -147,7 +149,7 @@ export function InvoiceInfo({
 
       {tokenMeta ? (
         <div className="flex items-center justify-between text-xs">
-          <span className="text-warm-500">Contract</span>
+          <span className="text-warm-500">{t("contract")}</span>
           <button
             type="button"
             onClick={() => contractClipboard.copy(tokenMeta.contract_address)}
@@ -168,7 +170,7 @@ export function InvoiceInfo({
       <Separator className="bg-warm-300/40" />
 
       <div className="flex items-center justify-between text-xs">
-        <span className="text-warm-500">Invoice ID</span>
+        <span className="text-warm-500">{t("invoiceId")}</span>
         <button
           type="button"
           onClick={() => idClipboard.copy(id)}
@@ -184,8 +186,8 @@ export function InvoiceInfo({
       </div>
 
       <div className="flex items-center justify-between text-xs">
-        <span className="text-warm-500">Created</span>
-        <span className="text-warm-900">{formatDate(createdAt)}</span>
+        <span className="text-warm-500">{t("created")}</span>
+        <span className="text-warm-900">{formatDate(createdAt, i18n.language)}</span>
       </div>
 
       {chain ? (
@@ -194,7 +196,7 @@ export function InvoiceInfo({
             <Tooltip>
               <TooltipTrigger asChild>
                 <span className="flex cursor-help items-center gap-1 text-warm-500">
-                  Confirmations
+                  {t("confirmations")}
                   <Info className="size-3" />
                 </span>
               </TooltipTrigger>
@@ -202,8 +204,7 @@ export function InvoiceInfo({
                 side="top"
                 className="max-w-56 text-xs leading-relaxed"
               >
-                Network confirmations reduce the risk of chain reorganizations
-                reversing your transaction.
+                {t("confirmationsTooltip")}
               </TooltipContent>
             </Tooltip>
             <span className="font-medium text-warm-900">
@@ -215,7 +216,7 @@ export function InvoiceInfo({
             <Tooltip>
               <TooltipTrigger asChild>
                 <span className="flex cursor-help items-center gap-1 text-warm-500">
-                  Block lag
+                  {t("blockLag")}
                   <Info className="size-3" />
                 </span>
               </TooltipTrigger>
@@ -223,8 +224,7 @@ export function InvoiceInfo({
                 side="top"
                 className="max-w-56 text-xs leading-relaxed"
               >
-                How far behind the chain tip we process blocks. A small lag
-                improves stability and protects against short reorganizations.
+                {t("blockLagTooltip")}
               </TooltipContent>
             </Tooltip>
             <span className="font-medium text-warm-900">{chain.block_lag}</span>

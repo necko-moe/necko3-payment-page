@@ -38,6 +38,7 @@ If you're looking for the admin panel where you configure chains, create invoice
 - **Payment progress** — a progress bar showing paid vs. total with BigInt-safe decimal formatting _(no floating-point rounding surprises on large amounts)_.
 - **Paginated transaction list** — every payment attempt with amount, sender address, tx hash (click to copy), status badge, and timestamp. Paginated at 4 per page because nobody wants to scroll through 47 dust attacks.
 - **Chain & token agnostic** — the UI doesn't hardcode any network or token. Whatever your backend exposes through the public chain/token endpoints, the payment page will render it — logos, decimals, contract addresses, confirmation thresholds, all of it.
+- **Multilingual** — ships with English, Russian, Ukrainian, and Simplified Chinese out of the box. Language is auto-detected from the browser and persisted in `localStorage`. Switching is instant, no reload. Adding a new language is one JSON file away.
 - **Dark / light theme** — persisted in `localStorage`, applied before first paint via an inline script in `index.html` _(no white flash of death)_. Toggle lives in the page header.
 - **Fully responsive** — two-column grid on desktop, single column on mobile. Works on everything from an iPhone SE to whatever ultrawide monitor you're compensating with.
 - **Static build output** — deploy anywhere: Nginx, Caddy, S3, a Raspberry Pi, your grandma's NAS. If it can serve HTML, it can run this.
@@ -71,6 +72,7 @@ If you're looking for the admin panel where you configure chains, create invoice
 | Components | shadcn/ui + Radix UI |
 | Routing | react-router 7 |
 | QR | qr-code-styling |
+| i18n | react-i18next |
 | Fonts & Icons | Geist, Lucide |
 | Toasts | Sonner |
 

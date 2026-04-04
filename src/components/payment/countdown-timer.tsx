@@ -1,4 +1,5 @@
 import { Clock, AlertTriangle } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useCountdown } from "@/hooks/use-countdown";
 
 interface CountdownTimerProps {
@@ -18,6 +19,7 @@ function formatTime(ms: number): string {
 }
 
 export function CountdownTimer({ expiresAt }: CountdownTimerProps) {
+  const { t } = useTranslation();
   const remaining = useCountdown(expiresAt);
   const isUrgent = remaining > 0 && remaining < 60_000;
   const isExpired = remaining <= 0;
@@ -37,7 +39,7 @@ export function CountdownTimer({ expiresAt }: CountdownTimerProps) {
       ) : (
         <Clock className="size-4" />
       )}
-      <span>{isExpired ? "Expired" : formatTime(remaining)}</span>
+      <span>{isExpired ? t("expired") : formatTime(remaining)}</span>
     </div>
   );
 }

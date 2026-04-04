@@ -6,6 +6,7 @@ import {
   useState,
 } from "react";
 import { toast } from "sonner";
+import i18n from "@/i18n";
 import { fetchInvoice, fetchPublicChain, fetchPublicToken } from "@/lib/api";
 import type {
   PublicChainModel,
@@ -76,7 +77,7 @@ export function useInvoice(invoiceId: string): UseInvoiceReturn {
       try {
         const res = await fetchInvoice(invoiceId, signal);
         if (res.status === "error") {
-          const msg = res.message ?? "Could not load invoice";
+          const msg = res.message ?? i18n.t("couldNotLoad");
           if (!hasLoadedOnce.current) {
             setError(msg);
           } else {
@@ -86,7 +87,7 @@ export function useInvoice(invoiceId: string): UseInvoiceReturn {
         }
         if (res.status === "success" && !res.data) {
           if (!hasLoadedOnce.current) {
-            setError("Invoice not found");
+            setError(i18n.t("invoiceNotFound"));
           }
           return true;
         }
@@ -100,7 +101,7 @@ export function useInvoice(invoiceId: string): UseInvoiceReturn {
       } catch (err: unknown) {
         if (err instanceof DOMException && err.name === "AbortError") return true;
         const msg =
-          err instanceof Error ? err.message : "Could not load invoice";
+          err instanceof Error ? err.message : i18n.t("couldNotLoad");
         if (!hasLoadedOnce.current) {
           setError(msg);
           return true;
