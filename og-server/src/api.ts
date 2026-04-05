@@ -16,7 +16,7 @@ interface ApiResponse<T> {
   message?: string | null;
 }
 
-const BACKEND_URL = process.env.BACKEND_URL ?? "";
+const BACKEND_URL = process.env.OG_API_URL ?? "http://127.0.0.1/api";
 
 export async function fetchInvoice(
   id: string,
