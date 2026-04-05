@@ -1,3 +1,16 @@
+map $http_user_agent $is_bot {
+    default 0;
+    ~*TelegramBot    1;
+    ~*WhatsApp       1;
+    ~*facebookexternalhit 1;
+    ~*Twitterbot     1;
+    ~*Discordbot     1;
+    ~*Slackbot       1;
+    ~*LinkedInBot    1;
+    ~*vkShare        1;
+    ~*Viber          1;
+}
+
 server {
     listen 80;
     server_name localhost;
@@ -19,7 +32,23 @@ server {
         resolver 8.8.8.8 valid=30s;
     }
 
+    location ^~ /og/ {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_set_header Host $host;
+    }
+
+    location @og_bot {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_set_header Host $host;
+    }
+
     location / {
+        error_page 418 = @og_bot;
+
+        if ($is_bot) {
+            return 418;
+        }
+
         try_files $uri $uri/ /index.html;
     }
 

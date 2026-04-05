@@ -1,0 +1,27 @@
+{
+  "name": "necko3-payment-og",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "esbuild src/index.tsx --bundle --platform=node --format=esm --outdir=dist --external:@resvg/resvg-js --external:yoga-wasm-web --packages=external --banner:js=\"import{createRequire}from'module';const require=createRequire(import.meta.url);\"",
+    "dev": "tsx src/index.tsx"
+  },
+  "dependencies": {
+    "@fontsource/inter": "^5.2.8",
+    "@hono/node-server": "^1.14.1",
+    "@resvg/resvg-js": "^2.6.2",
+    "hono": "^4.7.7",
+    "qrcode": "^1.5.4",
+    "react": "^19.2.4",
+    "satori": "^0.12.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.2",
+    "@types/qrcode": "^1.5.5",
+    "@types/react": "^19.1.2",
+    "esbuild": "^0.25.3",
+    "tsx": "^4.19.4",
+    "typescript": "~5.8.3"
+  }
+}

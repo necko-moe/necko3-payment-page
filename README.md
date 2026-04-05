@@ -41,6 +41,7 @@ If you're looking for the admin panel where you configure chains, create invoice
 - **Multilingual** — ships with English, Russian, Ukrainian, and Simplified Chinese out of the box. Language is auto-detected from the browser and persisted in `localStorage`. Switching is instant, no reload. Adding a new language is one JSON file away.
 - **Dark / light theme** — persisted in `localStorage`, applied before first paint via an inline script in `index.html` _(no white flash of death)_. Toggle lives in the page header.
 - **Fully responsive** — two-column grid on desktop, single column on mobile. Works on everything from an iPhone SE to whatever ultrawide monitor you're compensating with.
+- **Rich link previews** — share an invoice link in Telegram, WhatsApp, Discord, or any other messenger and get an auto-generated OG image card with a QR code, amount, token, network, and expiry date. Powered by a tiny Node.js sidecar (Satori + resvg) running inside the same Docker container — no external services, no headless browsers.
 - **Static build output** — deploy anywhere: Nginx, Caddy, S3, a Raspberry Pi, your grandma's NAS. If it can serve HTML, it can run this.
 
 ## Screenshots
@@ -119,11 +120,12 @@ curl -o docker-compose.yml https://raw.githubusercontent.com/necko-moe/necko3-pa
 curl -o .env https://raw.githubusercontent.com/necko-moe/necko3-payment-page/refs/heads/main/.env.example
 ```
 
-Open `.env` and fill in one value:
+Open `.env` and fill in:
 
 | Variable | Description |
 |----------|-------------|
 | `BACKEND_URL` | Full URL to your [necko3-backend](https://github.com/necko-moe/necko3-backend) instance (e.g. `https://api.necko.moe`). The nginx proxy inside the container forwards `/api/` requests here. |
+| `PUBLIC_URL` | Public-facing URL of this payment page (e.g. `https://payment.necko.moe`). Used to generate OG preview images and meta tags when invoice links are shared in messengers. |
 
 ### 3. Launch
 
