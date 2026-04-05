@@ -33,7 +33,7 @@ COPY --from=og-builder /app/node_modules /opt/og-server/node_modules
 COPY nginx.conf.template /etc/nginx/templates/default.conf.template
 
 COPY entrypoint.sh /docker-entrypoint.d/40-og-server.sh
-RUN chmod +x /docker-entrypoint.d/40-og-server.sh
+RUN sed -i 's/\r$//' /docker-entrypoint.d/40-og-server.sh && chmod +x /docker-entrypoint.d/40-og-server.sh
 
 EXPOSE 80
 
