@@ -1,15 +1,20 @@
-import QRCode from "qrcode";
+import { QRCodeCanvas } from "@loskir/styled-qr-code-node";
 
-const QR_DARK = "#2a526a";
-const QR_LIGHT = "#faf0e7";
+const ACCENT_DEEP = "#2a526a";
 
 export async function generateQrDataUrl(data: string): Promise<string> {
-  const svg = await QRCode.toString(data, {
-    type: "svg",
-    margin: 2,
-    width: 280,
-    color: { dark: QR_DARK, light: QR_LIGHT },
-    errorCorrectionLevel: "M",
+  const qr = new QRCodeCanvas({
+    width: 260,
+    height: 260,
+    margin: 0,
+    data,
+    dotsOptions: { type: "extra-rounded", color: ACCENT_DEEP },
+    cornersSquareOptions: { type: "extra-rounded", color: ACCENT_DEEP },
+    cornersDotOptions: { type: "dot", color: ACCENT_DEEP },
+    backgroundOptions: { color: "transparent" },
+    qrOptions: { errorCorrectionLevel: "M" },
   });
-  return `data:image/svg+xml;base64,${Buffer.from(svg).toString("base64")}`;
+
+  const buf = await qr.toBuffer("png");
+  return `data:image/png;base64,${buf.toString("base64")}`;
 }

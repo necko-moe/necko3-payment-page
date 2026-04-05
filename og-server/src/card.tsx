@@ -1,7 +1,10 @@
 import type { PublicInvoiceModel } from "./api.js";
 import React from "react";
 
-const BG = "#faf0e7";
+const OUTER_BG = "#f5f5f5";
+const CARD_BG = "#faf0e7";
+const CARD_BORDER = "rgba(198,190,183,0.5)";
+const QR_BG = "#f5f5f5";
 const TEXT = "#40372e";
 const MUTED = "#9b9089";
 const PRIMARY = "#2a526a";
@@ -35,7 +38,7 @@ function InfoRow({ label, value }: { label: string; value: string }) {
     <div style={{ display: "flex", alignItems: "baseline", gap: 16 }}>
       <span
         style={{
-          fontSize: 11,
+          fontSize: 12,
           fontWeight: 600,
           textTransform: "uppercase",
           letterSpacing: "0.06em",
@@ -49,7 +52,7 @@ function InfoRow({ label, value }: { label: string; value: string }) {
       </span>
       <span
         style={{
-          fontSize: 14,
+          fontSize: 15,
           fontFamily: MONO,
           color: TEXT,
           overflow: "hidden",
@@ -76,170 +79,192 @@ export function Card({ invoice, qrDataUrl, publicUrl }: CardProps) {
     <div
       style={{
         display: "flex",
-        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
         width: 1200,
         height: 630,
-        backgroundColor: BG,
+        backgroundColor: OUTER_BG,
         fontFamily: SANS,
         color: TEXT,
-        padding: "48px 56px",
       }}
     >
-      {/* Header */}
+      {/* Card */}
       <div
         style={{
           display: "flex",
-          alignItems: "center",
-          gap: 10,
-          marginBottom: 32,
+          flexDirection: "column",
+          width: 1120,
+          height: 560,
+          backgroundColor: CARD_BG,
+          borderRadius: 24,
+          border: `1px solid ${CARD_BORDER}`,
+          padding: "36px 44px",
         }}
       >
+        {/* Header */}
         <div
           style={{
             display: "flex",
             alignItems: "center",
-            justifyContent: "center",
-            width: 30,
-            height: 30,
-            borderRadius: 7,
-            backgroundColor: PRIMARY,
-            color: PRIMARY_FG,
-            fontSize: 13,
-            fontWeight: 700,
-            lineHeight: 1,
-            fontFamily: SANS,
+            gap: 10,
+            marginBottom: 24,
           }}
         >
-          N3
-        </div>
-        <span
-          style={{
-            fontSize: 20,
-            fontWeight: 600,
-            letterSpacing: "-0.02em",
-            color: TEXT,
-          }}
-        >
-          necko3
-        </span>
-      </div>
-
-      {/* Content row */}
-      <div style={{ display: "flex", flex: 1, gap: 48 }}>
-        {/* QR code */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "flex-start",
-            flexShrink: 0,
-          }}
-        >
-          <img
-            src={qrDataUrl}
-            width={280}
-            height={280}
-            style={{ borderRadius: 12 }}
-          />
-        </div>
-
-        {/* Invoice details */}
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            flex: 1,
-            justifyContent: "center",
-            overflow: "hidden",
-          }}
-        >
-          <span style={{ fontSize: 14, color: MUTED, marginBottom: 8 }}>
-            Scan to Pay
-          </span>
-
-          {/* Amount + Token */}
           <div
             style={{
               display: "flex",
-              alignItems: "baseline",
-              gap: 10,
+              alignItems: "center",
+              justifyContent: "center",
+              width: 28,
+              height: 28,
+              borderRadius: 7,
+              backgroundColor: PRIMARY,
+              color: PRIMARY_FG,
+              fontSize: 12,
+              fontWeight: 700,
+              lineHeight: 1,
+              fontFamily: SANS,
+            }}
+          >
+            N3
+          </div>
+          <span
+            style={{
+              fontSize: 18,
+              fontWeight: 600,
+              letterSpacing: "-0.02em",
+              color: TEXT,
+            }}
+          >
+            necko3
+          </span>
+        </div>
+
+        {/* Content row: QR left (centered) + details right */}
+        <div
+          style={{
+            display: "flex",
+            flex: 1,
+            alignItems: "center",
+            gap: 44,
+          }}
+        >
+          {/* QR wrapper */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexShrink: 0,
+              width: 320,
+              height: 320,
+              backgroundColor: QR_BG,
+              borderRadius: 24,
+              padding: 30,
+            }}
+          >
+            <img src={qrDataUrl} width={260} height={260} />
+          </div>
+
+          {/* Invoice details */}
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              flex: 1,
+              justifyContent: "center",
               overflow: "hidden",
             }}
           >
-            <span
+            <span style={{ fontSize: 14, color: MUTED, marginBottom: 8 }}>
+              Scan to Pay
+            </span>
+
+            {/* Amount + Token */}
+            <div
               style={{
-                fontSize: 40,
-                fontWeight: 700,
-                letterSpacing: "-0.02em",
-                color: TEXT,
+                display: "flex",
+                alignItems: "baseline",
+                gap: 10,
                 overflow: "hidden",
-                textOverflow: "ellipsis",
-                whiteSpace: "nowrap",
-                maxWidth: 480,
               }}
             >
-              {invoice.amount}
+              <span
+                style={{
+                  fontSize: 42,
+                  fontWeight: 700,
+                  letterSpacing: "-0.02em",
+                  color: TEXT,
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                  maxWidth: 420,
+                }}
+              >
+                {invoice.amount}
+              </span>
+              <span
+                style={{
+                  fontSize: 28,
+                  fontWeight: 600,
+                  color: TEXT,
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                  maxWidth: 220,
+                }}
+              >
+                {invoice.token}
+              </span>
+            </div>
+
+            <span style={{ fontSize: 16, color: MUTED, marginTop: 4 }}>
+              {invoice.network}
             </span>
-            <span
+
+            {/* Divider */}
+            <div
               style={{
-                fontSize: 26,
-                fontWeight: 600,
-                color: TEXT,
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                whiteSpace: "nowrap",
-                maxWidth: 240,
+                width: "100%",
+                height: 1,
+                backgroundColor: DIVIDER,
+                margin: "20px 0",
+                opacity: 0.6,
               }}
+            />
+
+            {/* Info rows */}
+            <div
+              style={{ display: "flex", flexDirection: "column", gap: 12 }}
             >
-              {invoice.token}
-            </span>
-          </div>
-
-          <span style={{ fontSize: 16, color: MUTED, marginTop: 4 }}>
-            {invoice.network}
-          </span>
-
-          {/* Divider */}
-          <div
-            style={{
-              width: "100%",
-              height: 1,
-              backgroundColor: DIVIDER,
-              margin: "20px 0",
-              opacity: 0.6,
-            }}
-          />
-
-          {/* Info rows */}
-          <div
-            style={{ display: "flex", flexDirection: "column", gap: 12 }}
-          >
-            <InfoRow label="Invoice" value={truncate(invoice.id, 36)} />
-            <InfoRow label="Created" value={fmtDate(invoice.created_at)} />
-            <InfoRow label="Expires" value={fmtDate(invoice.expires_at)} />
+              <InfoRow label="Invoice" value={truncate(invoice.id, 36)} />
+              <InfoRow label="Created" value={fmtDate(invoice.created_at)} />
+              <InfoRow label="Expires" value={fmtDate(invoice.expires_at)} />
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Footer */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          marginTop: 20,
-        }}
-      >
-        <span
+        {/* Footer */}
+        <div
           style={{
-            fontSize: 12,
-            fontFamily: MONO,
-            color: MUTED,
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            whiteSpace: "nowrap",
+            display: "flex",
+            justifyContent: "center",
+            marginTop: 16,
           }}
         >
-          {paymentLink}
-        </span>
+          <span
+            style={{
+              fontSize: 12,
+              fontFamily: MONO,
+              color: MUTED,
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {paymentLink}
+          </span>
+        </div>
       </div>
     </div>
   );

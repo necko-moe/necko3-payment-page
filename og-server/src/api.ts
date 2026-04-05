@@ -24,11 +24,18 @@ export async function fetchInvoice(
   const url = `${BACKEND_URL}/public/invoice/${encodeURIComponent(id)}`;
   try {
     const res = await fetch(url);
-    if (!res.ok) return null;
+    if (!res.ok) {
+      console.warn("[og-server] invoice HTTP", res.status, url);
+      return null;
+    }
     const json = (await res.json()) as ApiResponse<PublicInvoiceModel>;
-    if (json.status !== "success" || !json.data) return null;
+    if (json.status !== "success" || !json.data) {
+      console.warn("[og-server] invoice API", json.status, json.message ?? "", url);
+      return null;
+    }
     return json.data;
-  } catch {
+  } catch (e) {
+    console.warn("[og-server] invoice fetch error", url, e);
     return null;
   }
 }

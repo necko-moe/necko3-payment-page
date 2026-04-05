@@ -41,9 +41,15 @@ async function renderImage(invoiceId: string): Promise<Buffer | null> {
 
 const app = new Hono();
 
-// OG image endpoint
-app.get("/og/:id.png", async (c) => {
-  const id = c.req.param("id") ?? "";
+function normalizeOgInvoiceId(raw: string): string {
+  const id = raw.trim();
+  if (id.toLowerCase().endsWith(".png")) return id.slice(0, -4);
+  return id;
+}
+
+// OG image: /og/{invoiceId}.png or /og/{invoiceId} (both work)
+app.get("/og/:id", async (c) => {
+  const id = normalizeOgInvoiceId(c.req.param("id") ?? "");
   try {
     const png = await renderImage(id);
     if (!png) return c.text("Invoice not found", 404);

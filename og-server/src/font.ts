@@ -1,11 +1,11 @@
 import { readFileSync } from "node:fs";
+import { createRequire as fontRequireFactory } from "node:module";
 
-// `require` is provided by the esbuild banner (createRequire shim)
-declare const require: NodeRequire;
+const fontRequire = fontRequireFactory(import.meta.url);
 
 function load(file: string): Buffer {
   return readFileSync(
-    require.resolve(`@fontsource/inter/files/${file}`),
+    fontRequire.resolve(`@fontsource/inter/files/${file}`),
   );
 }
 
