@@ -193,9 +193,9 @@ Static output lands in `dist/` — serve it however you like.
 ## Contributing
 
 I'd be happy to see any feedback.<br />
-Found a bug? <a href=https://github.com/necko-moe/necko3-backend/issues/new>Open an Issue</a>.<br />
+Found a bug? <a href=https://github.com/necko-moe/necko3-payment-page/issues/new>Open an Issue</a>.<br />
 Want to add a feature? Fork it and send a PR 
-(or just <a href=https://github.com/necko-moe/necko3-backend/issues/new>Open an Issue</a> and write whatever you want)
+(or just <a href=https://github.com/necko-moe/necko3-payment-page/issues/new>Open an Issue</a> and write whatever you want)
 
 ## License
 
@@ -214,7 +214,7 @@ The project and all repositories are distributed under the **MIT License**. Feel
     </ul>
   <p>
     Broke but still want to help?
-    You can just <a href="https://github.com/necko-moe/necko3-backend/stargazers"><b>⭐ Star this repo</b></a> to show your love. It really helps!
+    You can just <a href="https://github.com/necko-moe/necko3-payment-page/stargazers"><b>⭐ Star this repo</b></a> to show your love. It really helps!
   </p>
   <a href="https://github.com/necko-moe">
     <img src=".github/assets/necko3-2-200.png" alt="necko3 support banner" width="1024"/>
