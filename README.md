@@ -4,9 +4,17 @@
   </a>
   <h1>necko3-payment-page</h1>
 
-  <a href="https://github.com/necko-moe/necko3-payment-page/stargazers">
-    <img src="https://img.shields.io/github/stars/necko-moe/necko3-payment-page?style=social" alt="GitHub stars">
-  </a>
+  <p align="center">
+    <a href="https://github.com/necko-moe/necko3-payment-page/actions">
+      <img src="https://img.shields.io/github/actions/workflow/status/necko-moe/necko3-payment-page/ci.yml?branch=main&style=flat-square" alt="CI Status">
+    </a>
+    <a href="https://opensource.org/licenses/MIT">
+      <img src="https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square" alt="License: MIT">
+    </a>
+    <a href="https://github.com/necko-moe/necko3-payment-page/stargazers">
+       <img src="https://img.shields.io/github/stars/necko-moe/necko3-payment-page?style=social" alt="GitHub stars">
+     </a>
+  </p>
 </div>
 
 ***
@@ -32,7 +40,7 @@ If you're looking for the admin panel where you configure chains, create invoice
 
 ### Features
 
-- **Real-time polling** — invoice and payment data refresh every second. The moment a transaction hits the mempool, it shows up. Polling auto-stops once the invoice reaches a terminal state _(Paid, Expired, Cancelled)_, because hammering your backend after the job is done would be rude. (The transition to web sockets will happen as soon as I implement this on the backend)
+- **Real-time WebSocket updates** — the page connects to a dedicated WebSocket channel for the invoice and reacts instantly to every backend event: `PaymentDetected`, `PaymentConfirmed`, `PaymentReorged`, `PaymentFailed`, `PaymentLost`, `InvoicePaid`, `InvoiceExpired`, `InvoiceCancelled`. No polling, no delay, no hammering the API. The socket is closed automatically once the invoice reaches a terminal state.
 - **Branded QR codes** — generated with `qr-code-styling`, themed to match dark/light mode, with a composited center image showing the token logo and chain badge. Looks good enough to screenshot and send to your mom.
 - **Live countdown timer** — ticks down to `expires_at` every second. Goes red and urgent under one minute, because nothing motivates a crypto transfer like a ticking clock.
 - **Payment progress** — a progress bar showing paid vs. total with BigInt-safe decimal formatting _(no floating-point rounding surprises on large amounts)_.
@@ -80,23 +88,25 @@ If you're looking for the admin panel where you configure chains, create invoice
 ## How It Works
 
 1. Merchant creates an invoice via the [admin panel](https://github.com/necko-moe/necko3-frontend) or the backend API directly. The invoice comes with a payment link: `https://your-payment-page.example/{invoiceId}`.
-2. Customer opens the link. The page fetches the invoice from `GET /public/invoice/:id` and loads chain/token metadata in parallel.
+2. Customer opens the link. The page fetches the invoice from `GET /v1/checkout/invoice/:id` and loads chain/token metadata in parallel.
 3. A QR code with the deposit address is displayed alongside the amount, token, network, countdown timer, and confirmation requirements.
-4. The customer sends crypto. The page polls every second — the moment a transaction is detected, it appears in the payments list with a `Confirming` badge.
-5. Once enough confirmations roll in, the invoice flips to `Paid`, the page shows a success screen, and the merchant receives a webhook. Done.
+4. The page opens a WebSocket to `GET /v1/checkout/invoice/:id/ws`. The moment a transaction is detected on-chain, a `PaymentDetected` event arrives and it appears in the payments list with a `Confirming` badge — no reload required.
+5. As blocks roll in, `PaymentReorged` events update the block number in real time. Once the required confirmations are reached, `PaymentConfirmed` arrives, the paid amount increments, and `InvoicePaid` flips the invoice to its success screen. The merchant gets a webhook. Done.
 
-If the timer runs out before full payment, the page shows an `Expired` screen. If the merchant cancels the invoice, it shows `Cancelled`. In both cases, any existing transactions are still displayed below the status for reference.
+If the timer runs out before full payment, `InvoiceExpired` triggers the expired screen. If the merchant cancels, `InvoiceCancelled` does the same. Any recorded transactions are still displayed below the status for reference.
 
 ## Public API Endpoints
 
-The payment page consumes only **public** backend endpoints — no API key required:
+The payment page talks to the **checkout** and **chain** public endpoints — a publishable API key (`pk_live_...`) is required, but no private key or auth ever leaves the browser:
 
 | Endpoint | Purpose |
 |----------|---------|
-| `GET /public/invoice/:id` | Invoice details (amount, address, status, expiry) |
-| `GET /public/invoice/:id/payments?page=&page_size=` | Paginated payment attempts for the invoice |
-| `GET /public/chain/:name` | Chain metadata (confirmations, block lag, decimals, logo) |
-| `GET /public/chain/:name/token/:symbol` | Token metadata (contract, decimals, logo) |
+| `GET /v1/checkout/invoice/:id` | Invoice details (amount, address, status, expiry) |
+| `GET /v1/checkout/invoice/:id/payments?page=&page_size=` | Paginated payment attempts for the invoice |
+| `GET /v1/checkout/invoice/:id/ws` | WebSocket channel — streams `PaymentDetected`, `PaymentConfirmed`, `PaymentReorged`, `PaymentFailed`, `PaymentLost`, `InvoicePaid`, `InvoiceExpired`, `InvoiceCancelled` |
+| `GET /v1/chains/:name` | Chain metadata (confirmations, block lag, decimals, logo) |
+| `GET /v1/chains/:name/tokens/:symbol` | Token metadata (contract, decimals, logo) |
+| `GET /v1/proxy/image?url=` | Backend-proxied image fetch — used for chain/token logos that block cross-origin canvas reads |
 
 ## Installing and Launching
 
@@ -183,8 +193,9 @@ Static output lands in `dist/` — serve it however you like.
 ## Contributing
 
 I'd be happy to see any feedback.<br />
-Found a bug? <a href=https://github.com/necko-moe/necko3-payment-page/issues/new>Open an Issue</a>.<br />
-Want to add a feature? Fork it and send a PR.
+Found a bug? <a href=https://github.com/necko-moe/necko3-backend/issues/new>Open an Issue</a>.<br />
+Want to add a feature? Fork it and send a PR 
+(or just <a href=https://github.com/necko-moe/necko3-backend/issues/new>Open an Issue</a> and write whatever you want)
 
 ## License
 
@@ -194,10 +205,16 @@ The project and all repositories are distributed under the **MIT License**. Feel
 
 <div align="center">
   <h1>SUPPORT PROJECT</h1>
-  <p>Want to make necko1 employed or donate enough for a Triple Whopper? Contact me -> <a href=https://t.me/everyonehio>Telegram</a> or <a href="mailto:meow@necko.moe">Mail me</a> (I rarely check that). I don't accept direct card transfers, just so you know</p>
+  <p>Want to make necko1 employed or donate enough for a Triple Whopper? Contact me -> <a href=https://t.me/everyonehio>Telegram</a> or <a href="mailto:meow@necko.moe">Mail me</a> (I rarely check that)</p>
+  <p>I don't accept direct card transfers, but you can feed me some stablecoins:</p>
+    <ul style="list-style-type: none; padding: 0;">
+      <li><b>USDT (TRC20):</b> <code>THcVNoNu3oaLfssbWbNxXK5rUsLfpPM35D</code></li>
+      <li><b>Anything in Ethereum / ERC-20:</b> <code>0x97D596eA81C09aC76a89D495b7bACa7660eb4c73</code></li>
+      <li><b>TON:</b> <code>UQDRX9xv1uMxUMe9kkeidWGDkORI4gDx076QIaejtQUjI</code></li>
+    </ul>
   <p>
     Broke but still want to help?
-    You can just <a href="https://github.com/necko-moe/necko3-payment-page/stargazers"><b>⭐ Star this repo</b></a> to show your love. It really helps!
+    You can just <a href="https://github.com/necko-moe/necko3-backend/stargazers"><b>⭐ Star this repo</b></a> to show your love. It really helps!
   </p>
   <a href="https://github.com/necko-moe">
     <img src=".github/assets/necko3-2-200.png" alt="necko3 support banner" width="1024"/>
