@@ -11,13 +11,16 @@ export interface PublicInvoiceModel {
 }
 
 const BACKEND_URL = process.env.OG_API_URL ?? process.env.BACKEND_URL ?? "http://127.0.0.1";
+const PUBLIC_API_KEY = process.env.PUBLIC_API_KEY ?? "";
 
 export async function fetchInvoice(
   id: string,
 ): Promise<PublicInvoiceModel | null> {
   const url = `${BACKEND_URL.replace(/\/$/, "")}/v1/checkout/invoice/${encodeURIComponent(id)}`;
+  const headers: Record<string, string> = {};
+  if (PUBLIC_API_KEY) headers["Authorization"] = `Bearer ${PUBLIC_API_KEY}`;
   try {
-    const res = await fetch(url);
+    const res = await fetch(url, { headers });
     if (!res.ok) {
       console.warn("[og-server] invoice HTTP", res.status, url);
       return null;
