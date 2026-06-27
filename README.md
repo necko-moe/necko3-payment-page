@@ -126,6 +126,7 @@ Open `.env` and fill in:
 |----------|-------------|
 | `BACKEND_URL` | Full URL to your [necko3-backend](https://github.com/necko-moe/necko3-backend) instance (e.g. `https://api.necko.moe`). The nginx proxy inside the container forwards `/api/` requests here. |
 | `PUBLIC_URL` | Public-facing URL of this payment page (e.g. `https://payment.necko.moe`). Used to generate OG preview images and meta tags when invoice links are shared in messengers. |
+| `PUBLIC_API_KEY` | Publishable API key (`pk_live_...`) with `public_read` permission. Injected at container startup into the SPA — no image rebuild required. |
 
 ### 3. Launch
 
@@ -166,7 +167,7 @@ cd necko3-payment-page
 npm install
 
 cp .env.example .env
-nano .env # Rename BACKEND_URL to VITE_API_URL and point it at your backend
+nano .env # Set VITE_API_URL to your backend URL and PUBLIC_API_KEY to your pk_live key
 
 npm run dev
 ```

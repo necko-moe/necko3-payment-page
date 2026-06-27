@@ -1,32 +1,39 @@
+import { getApiKey, getApiUrl } from "@/lib/config";
 import type {
-  ApiResponse,
+  ChainData,
+  ErrorResponse,
   PaginatedPage,
-  PublicChainModel,
   PublicInvoiceModel,
   PublicPaymentModel,
-  PublicTokenModel,
+  TokenData,
 } from "@/types/invoice";
 
-const BASE_URL = import.meta.env.VITE_API_URL ?? "";
-
 async function request<T>(path: string, signal?: AbortSignal): Promise<T> {
-  const res = await fetch(`${BASE_URL}${path}`, { signal });
+  const apiKey = getApiKey();
+  const headers: HeadersInit = {};
+  if (apiKey) {
+    headers.Authorization = `Bearer ${apiKey}`;
+  }
+
+  const res = await fetch(`${getApiUrl()}${path}`, { signal, headers });
   if (!res.ok) {
     let message = `HTTP ${res.status}`;
     try {
-      const body = await res.json();
-      if (body?.message) message = body.message;
-    } catch { /* use default message */ }
+      const body = (await res.json()) as ErrorResponse;
+      if (body?.error?.message) message = body.error.message;
+    } catch {
+      /* use default message */
+    }
     throw new Error(message);
   }
-  return res.json();
+  return res.json() as Promise<T>;
 }
 
 export async function fetchInvoice(
   id: string,
   signal?: AbortSignal,
-): Promise<ApiResponse<PublicInvoiceModel>> {
-  return request(`/public/invoice/${id}`, signal);
+): Promise<PublicInvoiceModel> {
+  return request(`/v1/checkout/invoice/${encodeURIComponent(id)}`, signal);
 }
 
 export async function fetchInvoicePayments(
@@ -34,46 +41,46 @@ export async function fetchInvoicePayments(
   page: number,
   pageSize: number,
   signal?: AbortSignal,
-): Promise<ApiResponse<PaginatedPage<PublicPaymentModel>>> {
+): Promise<PaginatedPage<PublicPaymentModel>> {
   const params = new URLSearchParams({
     page: String(page),
     page_size: String(pageSize),
   });
-  return request(`/public/invoice/${id}/payments?${params}`, signal);
+  return request(
+    `/v1/checkout/invoice/${encodeURIComponent(id)}/payments?${params}`,
+    signal,
+  );
 }
 
-export async function fetchPublicChain(
+export async function fetchChain(
   name: string,
   signal?: AbortSignal,
-): Promise<PublicChainModel | null> {
+): Promise<ChainData | null> {
   try {
-    const res = await fetch(
-      `${BASE_URL}/public/chain/${encodeURIComponent(name)}`,
-      { signal },
+    return await request(
+      `/v1/chains/${encodeURIComponent(name)}`,
+      signal,
     );
-    if (res.status === 404) return null;
-    if (!res.ok) return null;
-    const json = (await res.json()) as ApiResponse<PublicChainModel>;
-    if (json.status !== "success" || json.data == null) return null;
-    return json.data;
   } catch {
     return null;
   }
 }
 
-export async function fetchPublicToken(
+export function getImageProxyUrl(imageUrl: string): string {
+  const params = new URLSearchParams({ url: imageUrl });
+  return `${getApiUrl()}/v1/proxy/image?${params}`;
+}
+
+export async function fetchToken(
   chainName: string,
   symbol: string,
   signal?: AbortSignal,
-): Promise<PublicTokenModel | null> {
+): Promise<TokenData | null> {
   try {
-    const path = `/public/chain/${encodeURIComponent(chainName)}/token/${encodeURIComponent(symbol)}`;
-    const res = await fetch(`${BASE_URL}${path}`, { signal });
-    if (res.status === 404) return null;
-    if (!res.ok) return null;
-    const json = (await res.json()) as ApiResponse<PublicTokenModel>;
-    if (json.status !== "success" || json.data == null) return null;
-    return json.data;
+    return await request(
+      `/v1/chains/${encodeURIComponent(chainName)}/tokens/${encodeURIComponent(symbol)}`,
+      signal,
+    );
   } catch {
     return null;
   }

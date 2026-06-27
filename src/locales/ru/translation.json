@@ -16,6 +16,7 @@
   "error": "Ошибка",
   "couldNotLoad": "Не удалось загрузить счёт",
   "paid": "Оплачено",
+  "confirming": "подтверждается",
   "transactions": "Транзакции",
   "noTransactions": "Транзакций пока нет",
   "from": "От {{address}}",
@@ -39,6 +40,7 @@
     "Expired": "Просрочен",
     "Cancelled": "Отменён",
     "Confirming": "Подтверждается",
-    "Confirmed": "Подтверждён"
+    "Confirmed": "Подтверждён",
+    "Failed": "Ошибка"
   }
 }

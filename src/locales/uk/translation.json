@@ -16,6 +16,7 @@
   "error": "Помилка",
   "couldNotLoad": "Не вдалося завантажити рахунок",
   "paid": "Сплачено",
+  "confirming": "підтверджується",
   "transactions": "Транзакції",
   "noTransactions": "Транзакцій поки немає",
   "from": "Від {{address}}",
@@ -39,6 +40,7 @@
     "Expired": "Прострочено",
     "Cancelled": "Скасовано",
     "Confirming": "Підтверджується",
-    "Confirmed": "Підтверджено"
+    "Confirmed": "Підтверджено",
+    "Failed": "Помилка"
   }
 }

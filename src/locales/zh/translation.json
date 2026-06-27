@@ -16,6 +16,7 @@
   "error": "错误",
   "couldNotLoad": "无法加载账单",
   "paid": "已付",
+  "confirming": "确认中",
   "transactions": "交易记录",
   "noTransactions": "暂无交易",
   "from": "来自 {{address}}",
@@ -39,6 +40,7 @@
     "Expired": "已过期",
     "Cancelled": "已取消",
     "Confirming": "确认中",
-    "Confirmed": "已确认"
+    "Confirmed": "已确认",
+    "Failed": "失败"
   }
 }

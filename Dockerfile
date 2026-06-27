@@ -32,6 +32,9 @@ COPY --from=og-builder /app/node_modules /opt/og-server/node_modules
 
 COPY nginx.conf.template /etc/nginx/templates/default.conf.template
 
+COPY docker-entrypoint.d/39-env-config.sh /docker-entrypoint.d/39-env-config.sh
+RUN sed -i 's/\r$//' /docker-entrypoint.d/39-env-config.sh && chmod +x /docker-entrypoint.d/39-env-config.sh
+
 COPY entrypoint.sh /docker-entrypoint.d/40-og-server.sh
 RUN sed -i 's/\r$//' /docker-entrypoint.d/40-og-server.sh && chmod +x /docker-entrypoint.d/40-og-server.sh
 

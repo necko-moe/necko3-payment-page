@@ -16,6 +16,7 @@
   "error": "Error",
   "couldNotLoad": "Could not load invoice",
   "paid": "Paid",
+  "confirming": "confirming",
   "transactions": "Transactions",
   "noTransactions": "No transactions yet",
   "from": "From {{address}}",
@@ -39,6 +40,7 @@
     "Expired": "Expired",
     "Cancelled": "Cancelled",
     "Confirming": "Confirming",
-    "Confirmed": "Confirmed"
+    "Confirmed": "Confirmed",
+    "Failed": "Failed"
   }
 }

@@ -9,11 +9,7 @@ import {
 import { useClipboard } from "@/hooks/use-clipboard";
 import { useTranslation } from "react-i18next";
 import { Copy, Check, Info } from "lucide-react";
-import type {
-  InvoiceStatus,
-  PublicChainModel,
-  PublicTokenModel,
-} from "@/types/invoice";
+import type { ChainData, InvoiceStatus, TokenData } from "@/types/invoice";
 
 interface InvoiceInfoProps {
   id: string;
@@ -21,8 +17,8 @@ interface InvoiceInfoProps {
   token: string;
   network: string;
   createdAt: string;
-  chain: PublicChainModel | null;
-  tokenMeta: PublicTokenModel | null;
+  chain: ChainData | null;
+  tokenMeta: TokenData | null;
   metaLoading: boolean;
 }
 
@@ -152,11 +148,11 @@ export function InvoiceInfo({
           <span className="text-warm-500">{t("contract")}</span>
           <button
             type="button"
-            onClick={() => contractClipboard.copy(tokenMeta.contract_address)}
+            onClick={() => contractClipboard.copy(tokenMeta.contract)}
             className="flex max-w-[min(100%,14rem)] items-center gap-1 font-mono text-warm-900 transition-colors hover:text-accent-deep"
           >
             <span className="truncate">
-              {truncateAddressLike(tokenMeta.contract_address)}
+              {truncateAddressLike(tokenMeta.contract)}
             </span>
             {contractClipboard.copied ? (
               <Check className="size-3 shrink-0 text-accent-deep" />

@@ -2,9 +2,8 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Sun, Moon } from "lucide-react";
-import { useInvoice } from "@/hooks/use-invoice";
+import { useCheckoutSession } from "@/hooks/use-checkout-session";
 import { formatTokenAmount } from "@/lib/format-token-amount";
-import { usePayments } from "@/hooks/use-payments";
 import { useTheme } from "@/hooks/use-theme";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
@@ -146,14 +145,20 @@ function LoadingSkeleton() {
 export function InvoicePage() {
   const { t } = useTranslation();
   const { invoiceId } = useParams<{ invoiceId: string }>();
-  const { invoice, loading, error, chain, token, metaLoading } = useInvoice(
-    invoiceId ?? "",
-  );
-  const { payments, total, page, pageSize, setPage } = usePayments(
-    invoiceId ?? "",
-    invoice?.status ?? null,
-    !!invoice,
-  );
+  const {
+    invoice,
+    loading,
+    error,
+    chain,
+    token,
+    metaLoading,
+    payments,
+    total,
+    page,
+    pageSize,
+    setPage,
+    confirmingAmount,
+  } = useCheckoutSession(invoiceId ?? "");
 
   const effectiveDecimals = token?.decimals ?? chain?.decimals ?? null;
 
@@ -233,6 +238,7 @@ export function InvoicePage() {
                     <PaymentProgress
                       paid={invoice.paid}
                       amount={invoice.amount}
+                      confirmingAmount={confirmingAmount}
                       token={invoice.token}
                       formatAmount={formatAmount}
                     />

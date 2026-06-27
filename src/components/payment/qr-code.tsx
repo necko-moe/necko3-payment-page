@@ -11,15 +11,15 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import type { PublicChainModel, PublicTokenModel } from "@/types/invoice";
+import type { ChainData, TokenData } from "@/types/invoice";
 
 export interface QrCodeProps {
   address: string;
   size?: number;
   networkName: string;
   metaLoading: boolean;
-  chain: PublicChainModel | null;
-  token: PublicTokenModel | null;
+  chain: ChainData | null;
+  token: TokenData | null;
 }
 
 function createQrInstance(color: string) {

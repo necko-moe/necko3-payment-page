@@ -23,9 +23,10 @@ interface PaymentsListProps {
 }
 
 const PAYMENT_STATUS_STYLES: Record<PaymentStatus, string> = {
+  Pending: "bg-warm-300/30 text-warm-700 border-warm-300",
   Confirming: "bg-accent-light/50 text-accent-deep border-accent-main/30",
   Confirmed: "bg-accent-green/60 text-warm-900 border-accent-green",
-  Cancelled: "bg-red-50 text-red-600 border-red-200",
+  Failed: "bg-red-50 text-red-600 border-red-200",
 };
 
 function truncateHash(hash: string) {
